@@ -1,6 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons'; // İkon paketini ekledik
 import HomeScreen from './screens/HomeScreen';
 import DetailsScreen from './screens/DetailsScreen';
 import SettingsScreen from './screens/SettingsScreen';
@@ -8,10 +9,15 @@ import SettingsScreen from './screens/SettingsScreen';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Stack Navigatörümüzü (Home -> Details geçişlerini) buraya taşıdık
 function HomeStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: 'tomato' }, // Başlık arka plan rengi
+        headerTintColor: '#fff', // Başlık yazı rengi
+        headerTitleStyle: { fontWeight: 'bold' },
+      }}
+    >
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Details" component={DetailsScreen} />
     </Stack.Navigator>
@@ -21,8 +27,27 @@ function HomeStack() {
 export default function App() {
   return (
     <NavigationContainer>
-      {/* headerShown: false diyerek üst üste iki başlık çıkmasını engelliyoruz */}
-      <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          headerShown: false,
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === 'Explore') {
+              // Seçiliyken dolu, değilken boş harita ikonu
+              iconName = focused ? 'map' : 'map-outline';
+            } else if (route.name === 'Settings') {
+              // Seçiliyken dolu, değilken boş ayarlar ikonu
+              iconName = focused ? 'settings' : 'settings-outline';
+            }
+
+            // İkonu döndür
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: 'tomato', // Seçili sekme rengi
+          tabBarInactiveTintColor: 'gray', // Pasif sekme rengi
+        })}
+      >
         <Tab.Screen name="Explore" component={HomeStack} />
         <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>
